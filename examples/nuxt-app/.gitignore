@@ -6,5 +6,10 @@ dist/
 # SQLite data
 data/
 
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+
 # Node
 node_modules/

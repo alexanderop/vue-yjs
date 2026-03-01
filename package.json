@@ -3,10 +3,12 @@
   "scripts": {
     "build": "pnpm build:vue-yjs && pnpm --filter 'vue-yjs-example-app' exec -- pnpm build && pnpm --filter 'vue-yjs-example-nuxt-app' exec -- pnpm build",
     "build:vue-yjs": "pnpm --filter 'vue-yjs' exec -- pnpm build",
+    "typecheck": "pnpm --filter 'vue-yjs' exec -- pnpm typecheck && pnpm --filter 'vue-yjs-example-app' exec -- pnpm typecheck && pnpm --filter 'vue-yjs-example-nuxt-app' exec -- pnpm typecheck",
     "lint:check": "oxlint -c .oxlintrc.json --deny-warnings",
     "lint:fix": "oxlint -c .oxlintrc.json --fix",
     "test": "CI=true pnpm --parallel run test",
     "release": "cp README.md packages/vue-yjs/README.md && pnpm run build && pnpm --filter 'vue-yjs' exec -- pnpm publish --no-git-checks && rm packages/vue-yjs/README.md",
+    "test:e2e": "pnpm --filter vue-yjs-example-nuxt-app test:e2e",
     "dev:vue": "pnpm build:vue-yjs && pnpm --filter 'vue-yjs-example-app' dev",
     "dev:nuxt": "pnpm build:vue-yjs && pnpm --filter 'vue-yjs-example-nuxt-app' dev",
     "prepare": "simple-git-hooks"

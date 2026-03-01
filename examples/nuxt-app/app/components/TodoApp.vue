@@ -64,7 +64,7 @@ onUnmounted(() => {
 
     <TodoInput @add="addTodo" />
 
-    <div v-if="todos.length === 0" class="empty-state">
+    <div v-if="todos.length === 0" class="empty-state" data-testid="empty-state">
       No todos yet. Add one above!
     </div>
 
@@ -76,7 +76,8 @@ onUnmounted(() => {
       ghost-class="ghost"
       tag="ul"
       class="todo-list"
-      @update="(e: { oldIndex?: number; newIndex?: number }) => {
+      data-testid="todo-list"
+      @update="(e) => {
         if (e.oldIndex != null && e.newIndex != null) {
           moveTodo(e.oldIndex, e.newIndex)
         }
@@ -93,10 +94,10 @@ onUnmounted(() => {
     </VueDraggable>
 
     <div class="undo-bar">
-      <button :disabled="!canUndo" class="undo-btn" title="Undo (Ctrl+Z)" @click="undo">
+      <button :disabled="!canUndo" class="undo-btn" title="Undo (Ctrl+Z)" data-testid="undo-button" @click="undo">
         Undo
       </button>
-      <button :disabled="!canRedo" class="undo-btn" title="Redo (Ctrl+Y)" @click="redo">
+      <button :disabled="!canRedo" class="undo-btn" title="Redo (Ctrl+Y)" data-testid="redo-button" @click="redo">
         Redo
       </button>
     </div>

@@ -5,17 +5,20 @@
   "type": "module",
   "scripts": {
     "dev": "nuxt dev",
+    "typecheck": "nuxi typecheck",
     "build": "nuxt build",
     "preview": "nuxt preview",
     "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "test:e2e": "playwright test -x",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "better-sqlite3": "^11.8.1",
     "drizzle-orm": "^0.39.3",
     "fractional-indexing": "^3.2.0",
     "lib0": "^0.2.94",
-    "nuxt": "^3.16.1",
+    "nuxt": "^4.0.0",
     "vue": "^3.5.13",
     "vue-draggable-plus": "^0.6.0",
     "vue-yjs": "workspace:*",
@@ -25,7 +28,9 @@
     "yjs": "^13.6.16"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^25.3.3",
     "drizzle-kit": "^0.30.5"
   }
 }

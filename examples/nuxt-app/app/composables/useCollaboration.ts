@@ -24,12 +24,6 @@ function getOrCreateUserColor(clientId: number): string {
   return generated
 }
 
-export interface AwarenessState {
-  [key: string]: unknown
-  name: string
-  color: string
-}
-
 export function useCollaboration(roomName: string = 'default') {
   const doc = useProvideYDoc()
 
@@ -51,8 +45,9 @@ export function useCollaboration(roomName: string = 'default') {
     onError: (err) => console.warn('[IndexedDB]', err),
   })
 
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  const wsUrl = `${protocol}//${window.location.host}/_ws`
+  const config = useRuntimeConfig()
+  const wsUrl = config.public.wsUrl
+    || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/_ws`
 
   const { provider, status, synced } = useWebSocketProvider(wsUrl, roomName, doc)
 

@@ -2,20 +2,13 @@ import * as Y from 'yjs'
 import { generateKeyBetween } from 'fractional-indexing'
 import { useYDoc, useY, useUndoManager } from 'vue-yjs'
 
-export interface Todo {
-  id: string
-  text: string
-  done: boolean
-  sortKey: string
-}
-
 export function useTodoList() {
   const resolvedDoc = useYDoc()
   const yTodos = resolvedDoc.getArray<Y.Map<unknown>>('todos')
   const rawTodos = useY(yTodos)
 
   const todos = computed(() => {
-    const items = rawTodos.value as Todo[]
+    const items = rawTodos.value as unknown as Todo[]
     return [...items].toSorted((a, b) => {
       const cmp = a.sortKey.localeCompare(b.sortKey)
       return cmp !== 0 ? cmp : a.id.localeCompare(b.id)
@@ -35,7 +28,7 @@ export function useTodoList() {
     if (!text.trim()) return
 
     const sorted = todos.value
-    const lastSortKey = sorted.length > 0 ? sorted[sorted.length - 1].sortKey : null
+    const lastSortKey = sorted.length > 0 ? sorted[sorted.length - 1]!.sortKey : null
     const sortKey = generateKeyBetween(lastSortKey, null)
 
     const item = new Y.Map<unknown>()
@@ -72,6 +65,7 @@ export function useTodoList() {
     if (toIndex < 0 || toIndex >= sorted.length) return
 
     const movedItem = sorted[fromIndex]
+    if (!movedItem) return
 
     // Calculate new sort key based on neighbors at the target position
     let prevKey: string | null = null
@@ -79,12 +73,12 @@ export function useTodoList() {
 
     if (fromIndex < toIndex) {
       // Moving down
-      prevKey = sorted[toIndex].sortKey
-      nextKey = toIndex + 1 < sorted.length ? sorted[toIndex + 1].sortKey : null
+      prevKey = sorted[toIndex]!.sortKey
+      nextKey = toIndex + 1 < sorted.length ? sorted[toIndex + 1]!.sortKey : null
     } else {
       // Moving up
-      prevKey = toIndex - 1 >= 0 ? sorted[toIndex - 1].sortKey : null
-      nextKey = sorted[toIndex].sortKey
+      prevKey = toIndex - 1 >= 0 ? sorted[toIndex - 1]!.sortKey : null
+      nextKey = sorted[toIndex]!.sortKey
     }
 
     const newSortKey = generateKeyBetween(prevKey, nextKey)

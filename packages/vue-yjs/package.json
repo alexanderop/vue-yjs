@@ -19,6 +19,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "vitest",
+    "typecheck": "tsc --noEmit",
     "build": "tsup",
     "dev": "tsup --watch"
   },

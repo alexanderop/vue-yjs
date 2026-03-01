@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Todo } from '~/composables/useTodoList'
-
 const props = defineProps<{
   todo: Todo
 }>()
@@ -22,6 +20,7 @@ function startEdit() {
 }
 
 function commitEdit() {
+  if (!isEditing.value) return
   const trimmed = editText.value.trim()
   if (trimmed && trimmed !== props.todo.text) {
     emit('edit', props.todo.id, trimmed)
@@ -35,13 +34,14 @@ function cancelEdit() {
 </script>
 
 <template>
-  <div class="todo-item" :class="{ done: todo.done }">
-    <span class="drag-handle" title="Drag to reorder">&#x2630;</span>
+  <div class="todo-item" :class="{ done: todo.done }" data-testid="todo-item">
+    <span class="drag-handle" title="Drag to reorder" data-testid="drag-handle">&#x2630;</span>
 
     <input
       type="checkbox"
       :checked="todo.done"
       class="todo-checkbox"
+      data-testid="todo-checkbox"
       @change="emit('toggle', todo.id)"
     />
 
@@ -50,18 +50,19 @@ function cancelEdit() {
         ref="editInput"
         v-model="editText"
         class="edit-input"
+        data-testid="todo-edit-input"
         @keydown.enter="commitEdit"
         @keydown.escape="cancelEdit"
         @blur="commitEdit"
       />
     </template>
     <template v-else>
-      <span class="todo-text" @dblclick="startEdit">
+      <span class="todo-text" data-testid="todo-text" @dblclick="startEdit">
         {{ todo.text }}
       </span>
     </template>
 
-    <button class="delete-btn" title="Delete" @click="emit('delete', todo.id)">
+    <button class="delete-btn" title="Delete" data-testid="delete-button" @click="emit('delete', todo.id)">
       &times;
     </button>
   </div>

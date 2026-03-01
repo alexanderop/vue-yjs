@@ -19,8 +19,9 @@ function submit() {
       type="text"
       placeholder="What needs to be done?"
       class="input-field"
+      data-testid="todo-input"
     />
-    <button type="submit" class="add-btn" :disabled="!text.trim()">
+    <button type="submit" class="add-btn" :disabled="!text.trim()" data-testid="add-button">
       Add
     </button>
   </form>

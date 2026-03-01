@@ -40,15 +40,22 @@ function flushUpdates(roomName: string): void {
 }
 
 function maybeCompact(roomName: string): void {
-  const rows = db
-    .select({ id: yjsUpdates.id, update: yjsUpdates.update })
+  // Check count with a lightweight IDs-only query to avoid loading blobs
+  const ids = db
+    .select({ id: yjsUpdates.id })
     .from(yjsUpdates)
     .where(eq(yjsUpdates.roomName, roomName))
     .all()
 
-  if (rows.length < COMPACTION_THRESHOLD) return
+  if (ids.length < COMPACTION_THRESHOLD) return
 
-  const maxId = rows[rows.length - 1].id
+  const maxId = ids[ids.length - 1]!.id
+
+  const rows = db
+    .select({ update: yjsUpdates.update })
+    .from(yjsUpdates)
+    .where(eq(yjsUpdates.roomName, roomName))
+    .all()
 
   const existingSnapshot = db
     .select({ snapshot: yjsSnapshots.snapshot })
@@ -58,18 +65,18 @@ function maybeCompact(roomName: string): void {
 
   const allUpdates: Uint8Array[] = []
   if (existingSnapshot) {
-    allUpdates.push(new Uint8Array(existingSnapshot.snapshot as ArrayBufferLike))
+    allUpdates.push(new Uint8Array(existingSnapshot.snapshot as unknown as ArrayBufferLike))
   }
   for (const row of rows) {
-    allUpdates.push(new Uint8Array(row.update as ArrayBufferLike))
+    allUpdates.push(new Uint8Array(row.update as unknown as ArrayBufferLike))
   }
 
   const merged = Y.mergeUpdates(allUpdates)
   const snapshotBuffer = Buffer.from(merged)
   const now = new Date()
 
-  db.transaction(() => {
-    db.insert(yjsSnapshots)
+  db.transaction((tx) => {
+    tx.insert(yjsSnapshots)
       .values({ roomName, snapshot: snapshotBuffer, updatedAt: now })
       .onConflictDoUpdate({
         target: yjsSnapshots.roomName,
@@ -77,10 +84,10 @@ function maybeCompact(roomName: string): void {
       })
       .run()
 
-    db.delete(yjsUpdates)
+    tx.delete(yjsUpdates)
       .where(and(eq(yjsUpdates.roomName, roomName), lte(yjsUpdates.id, maxId)))
       .run()
-  })()
+  })
 }
 
 export function loadPersistedDoc(roomName: string, doc: Y.Doc): void {
@@ -98,29 +105,28 @@ export function loadPersistedDoc(roomName: string, doc: Y.Doc): void {
     .all()
 
   if (snapshot) {
-    Y.applyUpdate(doc, new Uint8Array(snapshot.snapshot as ArrayBufferLike))
+    Y.applyUpdate(doc, new Uint8Array(snapshot.snapshot as unknown as ArrayBufferLike))
   }
 
   for (const row of updates) {
-    Y.applyUpdate(doc, new Uint8Array(row.update as ArrayBufferLike))
+    Y.applyUpdate(doc, new Uint8Array(row.update as unknown as ArrayBufferLike))
   }
 }
 
 export function persistFullDoc(roomName: string, doc: Y.Doc): void {
-  // Flush any pending batched updates first
+  // Clear pending buffer without flushing to DB — the full doc state already includes them
   const entry = pendingUpdates.get(roomName)
-  if (entry?.timer !== null && entry) {
-    clearTimeout(entry.timer)
+  if (entry) {
+    if (entry.timer !== null) clearTimeout(entry.timer)
+    pendingUpdates.delete(roomName)
   }
-  flushUpdates(roomName)
-  pendingUpdates.delete(roomName)
 
   const state = Y.encodeStateAsUpdate(doc)
   const snapshotBuffer = Buffer.from(state)
   const now = new Date()
 
-  db.transaction(() => {
-    db.insert(yjsSnapshots)
+  db.transaction((tx) => {
+    tx.insert(yjsSnapshots)
       .values({ roomName, snapshot: snapshotBuffer, updatedAt: now })
       .onConflictDoUpdate({
         target: yjsSnapshots.roomName,
@@ -128,8 +134,8 @@ export function persistFullDoc(roomName: string, doc: Y.Doc): void {
       })
       .run()
 
-    db.delete(yjsUpdates)
+    tx.delete(yjsUpdates)
       .where(eq(yjsUpdates.roomName, roomName))
       .run()
-  })()
+  })
 }

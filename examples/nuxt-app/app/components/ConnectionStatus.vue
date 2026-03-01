@@ -19,7 +19,7 @@ const statusConfig = computed(() => {
       class="status-dot"
       :style="{ background: statusConfig[status as keyof typeof statusConfig]?.color ?? 'rgba(234, 237, 243, 0.3)' }"
     />
-    <span class="status-label">
+    <span class="status-label" data-testid="connection-status">
       {{ synced && status === 'connected' ? 'Synced' : statusConfig[status as keyof typeof statusConfig]?.label ?? status }}
     </span>
   </div>

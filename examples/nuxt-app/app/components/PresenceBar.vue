@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { AwarenessState } from '~/composables/useCollaboration'
-
 defineProps<{
   states: Map<number, AwarenessState>
   localClientId: number
@@ -39,6 +37,7 @@ function commitName() {
         class="presence-dot"
         :class="{ 'is-you': clientId === localClientId }"
         :title="clientId === localClientId ? `${state.name} (you)` : state.name"
+        data-testid="presence-dot"
       >
         <span class="dot" :style="{ background: state.color }" />
         <template v-if="clientId === localClientId && isEditingName">
@@ -46,6 +45,7 @@ function commitName() {
             ref="nameInput"
             v-model="editName"
             class="name-edit"
+            data-testid="name-edit-input"
             @keydown.enter="commitName"
             @keydown.escape="isEditingName = false"
             @blur="commitName"
