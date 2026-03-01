@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "pnpm build:vue-yjs && pnpm --filter 'vue-yjs-example-app' exec -- pnpm build",
+    "build:vue-yjs": "pnpm --filter 'vue-yjs' exec -- pnpm build",
+    "lint:check": "eslint packages examples --ext .ts,.vue --max-warnings=0",
+    "test": "CI=true pnpm --parallel run test",
+    "release": "cp README.md packages/vue-yjs/README.md && pnpm run build && pnpm --filter 'vue-yjs' exec -- pnpm publish --no-git-checks && rm packages/vue-yjs/README.md"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.6",
+    "tsup": "^8.1.0",
+    "typescript": "^5.4.5"
+  },
+  "packageManager": "pnpm@9.3.0"
+}
