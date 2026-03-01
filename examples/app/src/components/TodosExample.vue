@@ -1,30 +1,28 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useY, useYDoc, useUndoManager } from "vue-yjs";
-import * as Y from "yjs";
+import { useYArray, useUndoManager } from "vue-yjs";
 
-const yDoc = useYDoc();
-const yTodos = yDoc.getArray<Y.Map<string | boolean>>("todos");
+interface Todo {
+  checked: boolean;
+  text: string;
+}
 
-const todos = useY(yTodos);
-const { undo, redo, canUndo, canRedo } = useUndoManager(yTodos);
+const { items: todos, push, update, yArray } = useYArray<Todo>("todos");
+const { undo, redo, canUndo, canRedo } = useUndoManager(yArray);
 const newTodo = ref("");
 
 function addTodo(event: Event) {
   event.preventDefault();
-  const todo = new Y.Map<string | boolean>();
-  todo.set("checked", false);
-  todo.set("text", newTodo.value);
-  yTodos.push([todo]);
+  push({ checked: false, text: newTodo.value });
   newTodo.value = "";
 }
 
 function toggleTodo(index: number, event: Event) {
-  yTodos.get(index).set("checked", (event.target as HTMLInputElement).checked);
+  update(index, { checked: (event.target as HTMLInputElement).checked });
 }
 
 function updateTodoText(index: number, event: Event) {
-  yTodos.get(index).set("text", (event.target as HTMLInputElement).value);
+  update(index, { text: (event.target as HTMLInputElement).value });
 }
 </script>
 
@@ -44,12 +42,12 @@ function updateTodoText(index: number, event: Event) {
       <label>
         <input
           type="checkbox"
-          :checked="todo.checked as boolean"
+          :checked="todo.checked"
           @change="toggleTodo(index, $event)"
         />
         <input
           type="text"
-          :value="todo.text as string"
+          :value="todo.text"
           @input="updateTodoText(index, $event)"
         />
       </label>

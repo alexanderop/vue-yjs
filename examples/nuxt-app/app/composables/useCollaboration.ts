@@ -1,4 +1,6 @@
-import { useProvideYDoc, useWebSocketProvider, useAwareness, useIndexedDB } from 'vue-yjs'
+import { useProvideYDoc, useYRoom, useAwareness } from 'vue-yjs'
+import { createWebSocketPolyfill } from './useWebSocketProxy'
+import { useMessageLog } from './useMessageLog'
 
 const USER_COLORS = [
   'rgb(255, 107, 237)', 'rgb(107, 237, 255)', 'rgb(237, 255, 107)',
@@ -25,11 +27,12 @@ function getOrCreateUserColor(clientId: number): string {
 }
 
 export function useCollaboration(roomName: string = 'default') {
-  const doc = useProvideYDoc()
-
+  // SSR guard: useYRoom uses WebSocket + IndexedDB which are browser-only
   if (import.meta.server) {
+    const doc = useProvideYDoc()
     return {
       doc,
+      provider: null as any,
       status: shallowRef('connecting' as const),
       synced: shallowRef(false),
       awarenessStates: shallowRef(new Map<number, AwarenessState>()),
@@ -37,23 +40,26 @@ export function useCollaboration(roomName: string = 'default') {
       userName: '',
       userColor: '',
       updateUserName: (_name: string) => {},
+      messageLog: useMessageLog(),
     }
   }
-
-  // Persist to IndexedDB for instant load on page refresh
-  const { synced: _idbSynced } = useIndexedDB(`yjs-${roomName}`, doc, {
-    onError: (err) => console.warn('[IndexedDB]', err),
-  })
 
   const config = useRuntimeConfig()
   const wsUrl = config.public.wsUrl
     || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/_ws`
 
-  const { provider, status, synced } = useWebSocketProvider(wsUrl, roomName, doc)
+  // Create message log and WebSocket proxy for devtools
+  const messageLog = useMessageLog()
+  const WebSocketPolyfill = createWebSocketPolyfill(messageLog.push)
 
-  const { states, localClientId, setLocalState } = useAwareness<AwarenessState>(
-    provider.awareness,
-  )
+  const { doc, provider, status, synced, awareness } = useYRoom(roomName, {
+    serverUrl: wsUrl,
+    persist: true,
+    onPersistError: (err: unknown) => console.warn('[IndexedDB]', err),
+    webSocket: { WebSocketPolyfill },
+  })
+
+  const { states, localClientId, setLocalState } = useAwareness<AwarenessState>(awareness)
 
   const userName = getOrCreateUserName()
   const userColor = getOrCreateUserColor(localClientId)
@@ -66,6 +72,7 @@ export function useCollaboration(roomName: string = 'default') {
 
   return {
     doc,
+    provider,
     status,
     synced,
     awarenessStates: states,
@@ -73,5 +80,6 @@ export function useCollaboration(roomName: string = 'default') {
     userName,
     userColor,
     updateUserName,
+    messageLog,
   }
 }

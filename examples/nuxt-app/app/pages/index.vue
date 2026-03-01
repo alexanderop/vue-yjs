@@ -12,7 +12,7 @@ useHead({
     </header>
     <main>
       <ClientOnly>
-        <TodoApp />
+        <CollaborationProvider />
         <template #fallback>
           <TodoSkeleton />
         </template>

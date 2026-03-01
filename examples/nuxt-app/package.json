@@ -10,6 +10,7 @@
     "preview": "nuxt preview",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
+    "test": "vitest",
     "test:e2e": "playwright test -x",
     "test:e2e:ui": "playwright test --ui"
   },
@@ -31,6 +32,7 @@
     "@playwright/test": "^1.58.2",
     "@types/better-sqlite3": "^7.6.12",
     "@types/node": "^25.3.3",
-    "drizzle-kit": "^0.30.5"
+    "drizzle-kit": "^0.30.5",
+    "vitest": "^1.6.0"
   }
 }

@@ -31,14 +31,26 @@ export type YTypeToJson<YType> =
  *
  * @example
  * ```ts
+ * // Auto-inferred — works great for simple types
  * const yArray = doc.getArray<string>('items')
  * const items = useY(yArray) // Ref<string[]>
+ *
+ * // Explicit override — useful for Y.Map<unknown> patterns
+ * interface Todo { id: string; text: string; done: boolean }
+ * const yTodos = doc.getArray<Y.Map<unknown>>('todos')
+ * const todos = useY<Todo[]>(yTodos) // Ref<Todo[]>
  * ```
  */
+export function useY<TJson>(
+  yData: Y.AbstractType<any>,
+): Readonly<ShallowRef<TJson>>;
 export function useY<YType extends Y.AbstractType<any>>(
-  yData: YType
-): Readonly<ShallowRef<YTypeToJson<YType>>> {
-  const data = shallowRef(yData.toJSON()) as ShallowRef<YTypeToJson<YType>>;
+  yData: YType,
+): Readonly<ShallowRef<YTypeToJson<YType>>>;
+export function useY(
+  yData: Y.AbstractType<any>,
+): Readonly<ShallowRef<unknown>> {
+  const data = shallowRef(yData.toJSON());
 
   const handler = () => {
     const newData = yData.toJSON();
@@ -53,5 +65,5 @@ export function useY<YType extends Y.AbstractType<any>>(
     yData.unobserveDeep(handler);
   });
 
-  return readonly(data) as Readonly<ShallowRef<YTypeToJson<YType>>>;
+  return readonly(data) as Readonly<ShallowRef<unknown>>;
 }

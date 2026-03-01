@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { useY, useYDoc } from "vue-yjs";
+import { useYMap } from "vue-yjs";
 
-const yDoc = useYDoc();
-const ySettings = yDoc.getMap<boolean>("settings");
-ySettings.set("weeklyReminderEmail", true);
+interface Settings {
+  weeklyReminderEmail: boolean;
+}
 
-const settings = useY(ySettings);
+const { data: settings, set } = useYMap<Settings>("settings", {
+  defaults: { weeklyReminderEmail: true },
+});
 </script>
 
 <template>
@@ -13,7 +15,7 @@ const settings = useY(ySettings);
     <input
       type="checkbox"
       :checked="settings.weeklyReminderEmail"
-      @change="ySettings.set('weeklyReminderEmail', ($event.target as HTMLInputElement).checked)"
+      @change="set('weeklyReminderEmail', ($event.target as HTMLInputElement).checked)"
     />
     Weekly Reminder Email
   </label>

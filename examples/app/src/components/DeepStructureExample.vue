@@ -1,28 +1,32 @@
 <script setup lang="ts">
-import { useY, useYDoc } from "vue-yjs";
-import * as Y from "yjs";
+import { useYArray } from "vue-yjs";
 
-const yDoc = useYDoc();
-const yPosts = yDoc.getArray<Y.Map<string | Y.Array<string>>>("posts");
-const yPost = new Y.Map<string | Y.Array<string>>();
-yPosts.push([yPost]);
-yPost.set("title", "Notes");
-const yTags = new Y.Array<string>();
-yTags.push(["cooking", "vegetables"]);
-yPost.set("tags", yTags);
+interface Post {
+  title: string;
+  tags: string[];
+}
 
-const yTagsOfFirstPost = yPosts.get(0).get("tags") as Y.Array<string>;
-const tagsOfFirstPost = useY(yTagsOfFirstPost);
+const { items: posts, push, yArray: yPosts } = useYArray<Post>("posts");
 
-function deleteTag(index: number) {
-  yTagsOfFirstPost.delete(index);
+// Add initial data if empty
+if (yPosts.length === 0) {
+  push({ title: "Notes", tags: ["cooking", "vegetables"] });
+}
+
+function deleteTag(postIndex: number, tagIndex: number) {
+  // For nested arrays, use the escape hatch
+  const yPost = yPosts.get(postIndex) as import("yjs").Map<unknown>;
+  const yTags = yPost.get("tags") as import("yjs").Array<string>;
+  yTags.delete(tagIndex);
 }
 </script>
 
 <template>
-  <div v-for="(tag, index) in tagsOfFirstPost" :key="`${tag}-${index}`">
-    {{ tag }}
-    <button @click="deleteTag(index)">x</button>
+  <div v-if="posts.length > 0">
+    <div v-for="(tag, tagIndex) in posts[0]?.tags" :key="`${tag}-${tagIndex}`">
+      {{ tag }}
+      <button @click="deleteTag(0, tagIndex)">x</button>
+    </div>
   </div>
-  <div>Result: {{ JSON.stringify(yPosts.toJSON(), null, 2) }}</div>
+  <div>Result: {{ JSON.stringify(posts, null, 2) }}</div>
 </template>

@@ -109,6 +109,9 @@ importers:
       drizzle-kit:
         specifier: ^0.30.5
         version: 0.30.6
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@25.3.3)(happy-dom@14.12.3)(terser@5.46.0)
 
   packages/vue-yjs:
     dependencies:

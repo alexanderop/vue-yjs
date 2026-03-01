@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { VueDraggable } from 'vue-draggable-plus'
-import { useCollaboration } from '~/composables/useCollaboration'
-import { useTodoList } from '~/composables/useTodoList'
+import type { WebSocketProviderStatus } from 'vue-yjs'
 
-const {
-  status,
-  synced,
-  awarenessStates,
-  localClientId,
-  userName,
-  userColor,
-  updateUserName,
-} = useCollaboration('default')
+const props = defineProps<{
+  status: WebSocketProviderStatus
+  synced: boolean
+  awarenessStates: Map<number, AwarenessState>
+  localClientId: number
+  userName: string
+  userColor: string
+}>()
+
+const emit = defineEmits<{
+  'update-name': [name: string]
+}>()
 
 const {
   todos,
@@ -44,7 +46,7 @@ onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
 })
 
-onUnmounted(() => {
+onScopeDispose(() => {
   window.removeEventListener('keydown', handleKeydown)
 })
 </script>
@@ -53,13 +55,13 @@ onUnmounted(() => {
   <div class="todo-app">
     <div class="toolbar">
       <PresenceBar
-        :states="awarenessStates"
-        :local-client-id="localClientId"
-        :user-name="userName"
-        :user-color="userColor"
-        @update-name="updateUserName"
+        :states="props.awarenessStates"
+        :local-client-id="props.localClientId"
+        :user-name="props.userName"
+        :user-color="props.userColor"
+        @update-name="emit('update-name', $event)"
       />
-      <ConnectionStatus :status="status" :synced="synced" />
+      <ConnectionStatus :status="props.status" :synced="props.synced" />
     </div>
 
     <TodoInput @add="addTodo" />
