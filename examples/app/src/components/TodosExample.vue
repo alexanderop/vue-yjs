@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useY } from "vue-yjs";
+import { useY, useYDoc, useUndoManager } from "vue-yjs";
 import * as Y from "yjs";
 
-const yDoc = new Y.Doc();
+const yDoc = useYDoc();
 const yTodos = yDoc.getArray<Y.Map<string | boolean>>("todos");
 
 const todos = useY(yTodos);
+const { undo, redo, canUndo, canRedo } = useUndoManager(yTodos);
 const newTodo = ref("");
 
 function addTodo(event: Event) {
@@ -28,6 +29,10 @@ function updateTodoText(index: number, event: Event) {
 </script>
 
 <template>
+  <div>
+    <button :disabled="!canUndo" @click="undo">Undo</button>
+    <button :disabled="!canRedo" @click="redo">Redo</button>
+  </div>
   <form @submit="addTodo">
     <label>
       <input type="text" v-model="newTodo" />

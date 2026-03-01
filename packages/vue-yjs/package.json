@@ -27,7 +27,17 @@
   },
   "peerDependencies": {
     "vue": "^3.3.0",
-    "yjs": "^13.6.16"
+    "yjs": "^13.6.16",
+    "y-protocols": "^1.0.6",
+    "y-websocket": "^2.0.4"
+  },
+  "peerDependenciesMeta": {
+    "y-protocols": {
+      "optional": true
+    },
+    "y-websocket": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@vue/test-utils": "^2.4.0",
@@ -35,6 +45,8 @@
     "vite": "^5.2.13",
     "vitest": "^1.6.0",
     "vue": "^3.4.0",
+    "y-protocols": "^1.0.6",
+    "y-websocket": "^2.0.4",
     "yjs": "^13.6.16"
   }
 }

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { useY } from "vue-yjs";
-import * as Y from "yjs";
+import { useY, useYDoc } from "vue-yjs";
 
-const yDoc = new Y.Doc();
+const yDoc = useYDoc();
 const ySettings = yDoc.getMap<boolean>("settings");
 ySettings.set("weeklyReminderEmail", true);
 

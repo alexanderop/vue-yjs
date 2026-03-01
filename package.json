@@ -1,14 +1,27 @@
 {
   "private": true,
   "scripts": {
-    "build": "pnpm build:vue-yjs && pnpm --filter 'vue-yjs-example-app' exec -- pnpm build",
+    "build": "pnpm build:vue-yjs && pnpm --filter 'vue-yjs-example-app' exec -- pnpm build && pnpm --filter 'vue-yjs-example-nuxt-app' exec -- pnpm build",
     "build:vue-yjs": "pnpm --filter 'vue-yjs' exec -- pnpm build",
-    "lint:check": "eslint packages examples --ext .ts,.vue --max-warnings=0",
+    "lint:check": "oxlint -c .oxlintrc.json --deny-warnings",
+    "lint:fix": "oxlint -c .oxlintrc.json --fix",
     "test": "CI=true pnpm --parallel run test",
-    "release": "cp README.md packages/vue-yjs/README.md && pnpm run build && pnpm --filter 'vue-yjs' exec -- pnpm publish --no-git-checks && rm packages/vue-yjs/README.md"
+    "release": "cp README.md packages/vue-yjs/README.md && pnpm run build && pnpm --filter 'vue-yjs' exec -- pnpm publish --no-git-checks && rm packages/vue-yjs/README.md",
+    "dev:vue": "pnpm build:vue-yjs && pnpm --filter 'vue-yjs-example-app' dev",
+    "dev:nuxt": "pnpm build:vue-yjs && pnpm --filter 'vue-yjs-example-nuxt-app' dev",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm exec lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,vue}": "oxlint -c .oxlintrc.json --deny-warnings"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.6",
+    "lint-staged": "^16.3.1",
+    "oxlint": "^1.50.0",
+    "simple-git-hooks": "^2.13.1",
     "tsup": "^8.1.0",
     "typescript": "^5.4.5"
   },

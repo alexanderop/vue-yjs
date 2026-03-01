@@ -1,4 +1,11 @@
 :root {
+  --color-fill: 33, 39, 55;
+  --color-text-base: 234, 237, 243;
+  --color-accent: 255, 107, 237;
+  --color-card: 52, 63, 96;
+  --color-card-muted: 138, 51, 123;
+  --color-border: 171, 75, 153;
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -7,4 +14,57 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  color: rgb(var(--color-text-base));
+  background: rgb(var(--color-fill));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+hr {
+  border-color: rgb(var(--color-border));
+  margin: 1.5rem 0;
+}
+
+button {
+  background: rgb(var(--color-accent));
+  color: rgb(var(--color-fill));
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+input[type="text"] {
+  background: rgb(var(--color-card));
+  color: rgb(var(--color-text-base));
+  border: 1px solid rgb(var(--color-border));
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  outline: none;
+}
+
+input[type="text"]:focus {
+  border-color: rgb(var(--color-accent));
+}
+
+#app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }

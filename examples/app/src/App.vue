@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useProvideYDoc } from "vue-yjs";
 import SettingsExample from "./components/SettingsExample.vue";
 import TodosExample from "./components/TodosExample.vue";
 import DeepStructureExample from "./components/DeepStructureExample.vue";
+
+const yDoc = useProvideYDoc();
 </script>
 
 <template>

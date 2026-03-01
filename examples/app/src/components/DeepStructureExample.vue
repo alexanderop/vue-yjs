@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useY } from "vue-yjs";
+import { useY, useYDoc } from "vue-yjs";
 import * as Y from "yjs";
 
-const yDoc = new Y.Doc();
+const yDoc = useYDoc();
 const yPosts = yDoc.getArray<Y.Map<string | Y.Array<string>>>("posts");
 const yPost = new Y.Map<string | Y.Array<string>>();
 yPosts.push([yPost]);
@@ -15,8 +15,7 @@ const yTagsOfFirstPost = yPosts.get(0).get("tags") as Y.Array<string>;
 const tagsOfFirstPost = useY(yTagsOfFirstPost);
 
 function deleteTag(index: number) {
-  const tags = yPosts.get(0).get("tags") as Y.Array<string>;
-  tags.delete(index);
+  yTagsOfFirstPost.delete(index);
 }
 </script>
 

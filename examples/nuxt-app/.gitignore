@@ -1,0 +1,10 @@
+# Nuxt
+.nuxt/
+.output/
+dist/
+
+# SQLite data
+data/
+
+# Node
+node_modules/

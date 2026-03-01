@@ -9,6 +9,7 @@ tmp*
 dist
 
 *.tsbuildinfo
+*.vue.js
 
 *.log
 

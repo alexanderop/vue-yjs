@@ -6,4 +6,5 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   format: ["cjs", "esm"],
+  external: ["vue", "yjs", "y-protocols", "y-protocols/awareness", "y-websocket", "lib0"],
 });

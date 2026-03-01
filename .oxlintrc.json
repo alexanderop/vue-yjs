@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import", "vue", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "rules": {
+    "import/no-unassigned-import": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/test-utils.ts"],
+      "rules": {
+        "typescript/no-non-null-assertion": "off",
+        "no-shadow": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "dist/**",
+    "**/*.vue.js",
+    ".react-yjs-reference/**",
+    ".changeset/**",
+    "coverage/**",
+    "examples/nuxt-app/.nuxt/**",
+    "examples/nuxt-app/.output/**"
+  ]
+}
