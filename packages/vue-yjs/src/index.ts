@@ -18,3 +18,6 @@ export type {
   UseWebSocketProviderReturn,
   WebSocketProviderStatus,
 } from "./useWebSocketProvider.js";
+
+export { useIndexedDB } from "./useIndexedDB.js";
+export type { UseIndexedDBOptions, UseIndexedDBReturn } from "./useIndexedDB.js";

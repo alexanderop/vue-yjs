@@ -29,13 +29,17 @@
     "vue": "^3.3.0",
     "yjs": "^13.6.16",
     "y-protocols": "^1.0.6",
-    "y-websocket": "^2.0.4"
+    "y-websocket": "^2.0.4",
+    "y-indexeddb": "^9.0.12"
   },
   "peerDependenciesMeta": {
     "y-protocols": {
       "optional": true
     },
     "y-websocket": {
+      "optional": true
+    },
+    "y-indexeddb": {
       "optional": true
     }
   },
@@ -45,6 +49,7 @@
     "vite": "^5.2.13",
     "vitest": "^1.6.0",
     "vue": "^3.4.0",
+    "y-indexeddb": "^9.0.12",
     "y-protocols": "^1.0.6",
     "y-websocket": "^2.0.4",
     "yjs": "^13.6.16"

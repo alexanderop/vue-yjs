@@ -1,7 +1,6 @@
 /// <reference types="../../node_modules/.vue-global-types/vue_3.5_0_0_0.d.ts" />
-import { useY } from "vue-yjs";
-import * as Y from "yjs";
-const yDoc = new Y.Doc();
+import { useY, useYDoc } from "vue-yjs";
+const yDoc = useYDoc();
 const ySettings = yDoc.getMap("settings");
 ySettings.set("weeklyReminderEmail", true);
 const settings = useY(ySettings);

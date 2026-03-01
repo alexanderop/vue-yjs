@@ -1,7 +1,9 @@
 /// <reference types="../node_modules/.vue-global-types/vue_3.5_0_0_0.d.ts" />
+import { useProvideYDoc } from "vue-yjs";
 import SettingsExample from "./components/SettingsExample.vue";
 import TodosExample from "./components/TodosExample.vue";
 import DeepStructureExample from "./components/DeepStructureExample.vue";
+const yDoc = useProvideYDoc();
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;

@@ -84,6 +84,9 @@ importers:
       vue-yjs:
         specifier: workspace:*
         version: link:../../packages/vue-yjs
+      y-indexeddb:
+        specifier: ^9.0.12
+        version: 9.0.12(yjs@13.6.29)
       y-protocols:
         specifier: ^1.0.6
         version: 1.0.7(yjs@13.6.29)
@@ -122,6 +125,9 @@ importers:
       vue:
         specifier: ^3.4.0
         version: 3.5.29(typescript@5.9.3)
+      y-indexeddb:
+        specifier: ^9.0.12
+        version: 9.0.12(yjs@13.6.29)
       y-protocols:
         specifier: ^1.0.6
         version: 1.0.7(yjs@13.6.29)
@@ -4931,6 +4937,12 @@ packages:
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
+
+  y-indexeddb@9.0.12:
+    resolution: {integrity: sha512-9oCFRSPPzBK7/w5vOkJBaVCQZKHXB/v6SIT+WYhnJxlEC61juqG0hBrAf+y3gmSMLFLwICNH9nQ53uscuse6Hg==}
+    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
+    peerDependencies:
+      yjs: ^13.0.0
 
   y-leveldb@0.1.2:
     resolution: {integrity: sha512-6ulEn5AXfXJYi89rXPEg2mMHAyyw8+ZfeMMdOtBbV8FJpQ1NOrcgi6DTAcXof0dap84NjHPT2+9d0rb6cFsjEg==}
@@ -9860,6 +9872,11 @@ snapshots:
 
   xtend@4.0.2:
     optional: true
+
+  y-indexeddb@9.0.12(yjs@13.6.29):
+    dependencies:
+      lib0: 0.2.117
+      yjs: 13.6.29
 
   y-leveldb@0.1.2(yjs@13.6.29):
     dependencies:

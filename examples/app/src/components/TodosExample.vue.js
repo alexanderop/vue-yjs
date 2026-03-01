@@ -1,10 +1,11 @@
 /// <reference types="../../node_modules/.vue-global-types/vue_3.5_0_0_0.d.ts" />
 import { ref } from "vue";
-import { useY } from "vue-yjs";
+import { useY, useYDoc, useUndoManager } from "vue-yjs";
 import * as Y from "yjs";
-const yDoc = new Y.Doc();
+const yDoc = useYDoc();
 const yTodos = yDoc.getArray("todos");
 const todos = useY(yTodos);
+const { undo, redo, canUndo, canRedo } = useUndoManager(yTodos);
 const newTodo = ref("");
 function addTodo(event) {
     event.preventDefault();
@@ -24,6 +25,15 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElements.button)({
+    ...{ onClick: (__VLS_ctx.undo) },
+    disabled: (!__VLS_ctx.canUndo),
+});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElements.button)({
+    ...{ onClick: (__VLS_ctx.redo) },
+    disabled: (!__VLS_ctx.canRedo),
+});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.form, __VLS_intrinsicElements.form)({
     ...{ onSubmit: (__VLS_ctx.addTodo) },
 });
@@ -61,6 +71,10 @@ const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
             todos: todos,
+            undo: undo,
+            redo: redo,
+            canUndo: canUndo,
+            canRedo: canRedo,
             newTodo: newTodo,
             addTodo: addTodo,
             toggleTodo: toggleTodo,

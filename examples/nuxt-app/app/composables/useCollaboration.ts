@@ -1,4 +1,4 @@
-import { useProvideYDoc, useWebSocketProvider, useAwareness } from 'vue-yjs'
+import { useProvideYDoc, useWebSocketProvider, useAwareness, useIndexedDB } from 'vue-yjs'
 
 const USER_COLORS = [
   'rgb(255, 107, 237)', 'rgb(107, 237, 255)', 'rgb(237, 255, 107)',
@@ -45,6 +45,11 @@ export function useCollaboration(roomName: string = 'default') {
       updateUserName: (_name: string) => {},
     }
   }
+
+  // Persist to IndexedDB for instant load on page refresh
+  const { synced: _idbSynced } = useIndexedDB(`yjs-${roomName}`, doc, {
+    onError: (err) => console.warn('[IndexedDB]', err),
+  })
 
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
   const wsUrl = `${protocol}//${window.location.host}/_ws`

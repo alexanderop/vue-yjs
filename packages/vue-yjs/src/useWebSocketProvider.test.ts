@@ -1,5 +1,4 @@
-// @vitest-environment happy-dom
-import { expect, test, vi, beforeEach } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import { withSetup } from "./test-utils.js";
 
@@ -23,7 +22,7 @@ const { MockWebsocketProvider } = vi.hoisted(() => {
       _serverUrl: string,
       _roomName: string,
       _doc: unknown,
-      opts?: { connect?: boolean }
+      opts?: { connect?: boolean },
     ) {
       this.shouldConnect = opts?.connect !== false;
     }
@@ -68,83 +67,97 @@ vi.mock("y-websocket", () => ({
 // Must import after mock setup
 const { useWebSocketProvider } = await import("./useWebSocketProvider.js");
 
-beforeEach(() => {
-  vi.clearAllMocks();
+describe("initialization", () => {
+  test("should create a provider and return initial status", () => {
+    const doc = new Y.Doc();
+    const { result } = withSetup(() =>
+      useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
+        connect: false,
+      }),
+    );
+
+    expect(result.provider).toBeDefined();
+    expect(result.awareness).toBeDefined();
+    expect(result.status.value).toBe("connecting");
+    expect(result.synced.value).toBe(false);
+  });
+
+  test("defaults to connect: true when no option specified", () => {
+    const doc = new Y.Doc();
+    const { result } = withSetup(() =>
+      useWebSocketProvider("ws://localhost:1234", "test-room", doc),
+    );
+    expect((result.provider as any).shouldConnect).toBe(true);
+  });
 });
 
-test("should create a provider and return initial status", () => {
-  const doc = new Y.Doc();
-  const { result } = withSetup(() =>
-    useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
-      connect: false,
-    })
-  );
+describe("connection lifecycle", () => {
+  test("status updates reactively on connect", () => {
+    const doc = new Y.Doc();
+    const { result } = withSetup(() =>
+      useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
+        connect: false,
+      }),
+    );
 
-  expect(result.provider).toBeDefined();
-  expect(result.awareness).toBeDefined();
-  expect(result.status.value).toBe("connecting");
-  expect(result.synced.value).toBe(false);
+    result.connect();
+    expect(result.status.value).toBe("connected");
+  });
+
+  test("status updates reactively on disconnect", () => {
+    const doc = new Y.Doc();
+    const { result } = withSetup(() =>
+      useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
+        connect: false,
+      }),
+    );
+
+    result.connect();
+    result.disconnect();
+    expect(result.status.value).toBe("disconnected");
+  });
+
+  test("synced ref updates on sync event", () => {
+    const doc = new Y.Doc();
+    const { result } = withSetup(() =>
+      useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
+        connect: false,
+      }),
+    );
+
+    // Manually emit sync event on the provider
+    (result.provider as any).emit("sync", [true]);
+    expect(result.synced.value).toBe(true);
+  });
+
+  test("synced ref returns to false when sync event fires with false", () => {
+    const doc = new Y.Doc();
+    const { result } = withSetup(() =>
+      useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
+        connect: false,
+      }),
+    );
+
+    (result.provider as any).emit("sync", [true]);
+    expect(result.synced.value).toBe(true);
+
+    (result.provider as any).emit("sync", [false]);
+    expect(result.synced.value).toBe(false);
+  });
+
 });
 
-test("status updates reactively on connect", () => {
-  const doc = new Y.Doc();
-  const { result } = withSetup(() =>
-    useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
-      connect: false,
-    })
-  );
+describe("cleanup", () => {
+  test("cleans up on unmount", () => {
+    const doc = new Y.Doc();
+    const { result, app } = withSetup(() =>
+      useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
+        connect: false,
+      }),
+    );
 
-  result.connect();
-  expect(result.status.value).toBe("connected");
-});
-
-test("status updates reactively on disconnect", () => {
-  const doc = new Y.Doc();
-  const { result } = withSetup(() =>
-    useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
-      connect: false,
-    })
-  );
-
-  result.connect();
-  result.disconnect();
-  expect(result.status.value).toBe("disconnected");
-});
-
-test("synced ref updates on sync event", () => {
-  const doc = new Y.Doc();
-  const { result } = withSetup(() =>
-    useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
-      connect: false,
-    })
-  );
-
-  // Manually emit sync event on the provider
-  (result.provider as any).emit("sync", [true]);
-  expect(result.synced.value).toBe(true);
-});
-
-test("exposes connect and disconnect functions", () => {
-  const doc = new Y.Doc();
-  const { result } = withSetup(() =>
-    useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
-      connect: false,
-    })
-  );
-
-  expect(typeof result.connect).toBe("function");
-  expect(typeof result.disconnect).toBe("function");
-});
-
-test("cleans up on unmount", () => {
-  const doc = new Y.Doc();
-  const { result, app } = withSetup(() =>
-    useWebSocketProvider("ws://localhost:1234", "test-room", doc, {
-      connect: false,
-    })
-  );
-
-  const spy = vi.spyOn(result.provider, "destroy");
-  app.unmount();
-  expect(spy).toHaveBeenCalledOnce();
+    const spy = vi.spyOn(result.provider, "destroy");
+    app.unmount();
+    expect(spy).toHaveBeenCalledOnce();
+  });
 });

@@ -1,7 +1,7 @@
 /// <reference types="../../node_modules/.vue-global-types/vue_3.5_0_0_0.d.ts" />
-import { useY } from "vue-yjs";
+import { useY, useYDoc } from "vue-yjs";
 import * as Y from "yjs";
-const yDoc = new Y.Doc();
+const yDoc = useYDoc();
 const yPosts = yDoc.getArray("posts");
 const yPost = new Y.Map();
 yPosts.push([yPost]);
@@ -12,8 +12,7 @@ yPost.set("tags", yTags);
 const yTagsOfFirstPost = yPosts.get(0).get("tags");
 const tagsOfFirstPost = useY(yTagsOfFirstPost);
 function deleteTag(index) {
-    const tags = yPosts.get(0).get("tags");
-    tags.delete(index);
+    yTagsOfFirstPost.delete(index);
 }
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};

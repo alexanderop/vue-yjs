@@ -1,4 +1,12 @@
+import { afterEach } from "vitest";
 import { createApp, type App, type InjectionKey } from "vue";
+
+const activeApps: App[] = [];
+
+afterEach(() => {
+  activeApps.forEach((app) => app.unmount());
+  activeApps.length = 0;
+});
 
 export function withSetup<T>(composable: () => T): { result: T; app: App } {
   let result!: T;
@@ -9,6 +17,7 @@ export function withSetup<T>(composable: () => T): { result: T; app: App } {
     },
   });
   app.mount(document.createElement("div"));
+  activeApps.push(app);
   return { result, app };
 }
 
@@ -27,5 +36,6 @@ export function withProvideSetup<T>(
     app.provide(key, value);
   }
   app.mount(document.createElement("div"));
+  activeApps.push(app);
   return { result, app };
 }
