@@ -3,6 +3,8 @@ import type { WebsocketProvider } from 'y-websocket'
 import type { WebSocketProviderStatus } from 'vue-yjs'
 import type * as Y from 'yjs'
 import type { useMessageLog } from '~/composables/useMessageLog'
+import type { useTransactionLog } from '~/composables/useTransactionLog'
+import type { useDocMetrics } from '~/composables/useDocMetrics'
 
 const props = defineProps<{
   doc: Y.Doc
@@ -12,6 +14,8 @@ const props = defineProps<{
   status: WebSocketProviderStatus
   synced: boolean
   messageLog: ReturnType<typeof useMessageLog>
+  transactionLog: ReturnType<typeof useTransactionLog>
+  docMetrics: ReturnType<typeof useDocMetrics>
 }>()
 
 const { isOpen, activeTab, close, setTab } = useDevTools()
@@ -22,6 +26,7 @@ const tabs = [
   { id: 'doc' as const, label: 'Document State' },
   { id: 'sync' as const, label: 'Sync & Network' },
   { id: 'awareness' as const, label: 'Awareness' },
+  { id: 'history' as const, label: 'History' },
 ]
 
 watch(isOpen, (open) => {
@@ -96,6 +101,16 @@ watch(isOpen, (open) => {
             <devtools-AwarenessTab
               :awareness-states="props.awarenessStates"
               :local-client-id="props.localClientId"
+            />
+          </div>
+          <div
+            v-show="activeTab === 'history'"
+            role="tabpanel"
+            aria-label="Transaction History"
+          >
+            <devtools-HistoryTab
+              :transaction-log="props.transactionLog"
+              :doc-metrics="props.docMetrics"
             />
           </div>
         </div>

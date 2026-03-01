@@ -21,5 +21,7 @@ const collaboration = useCollaboration('default')
     :status="collaboration.status.value"
     :synced="collaboration.synced.value"
     :message-log="collaboration.messageLog"
+    :transaction-log="collaboration.transactionLog"
+    :doc-metrics="collaboration.docMetrics"
   />
 </template>

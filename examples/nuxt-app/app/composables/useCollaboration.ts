@@ -1,6 +1,8 @@
 import { useProvideYDoc, useYRoom, useAwareness } from 'vue-yjs'
 import { createWebSocketPolyfill } from './useWebSocketProxy'
 import { useMessageLog } from './useMessageLog'
+import { useTransactionLog } from './useTransactionLog'
+import { useDocMetrics } from './useDocMetrics'
 
 const USER_COLORS = [
   'rgb(255, 107, 237)', 'rgb(107, 237, 255)', 'rgb(237, 255, 107)',
@@ -41,6 +43,8 @@ export function useCollaboration(roomName: string = 'default') {
       userColor: '',
       updateUserName: (_name: string) => {},
       messageLog: useMessageLog(),
+      transactionLog: { entries: shallowRef([]), clear: () => {} },
+      docMetrics: { metrics: shallowRef({ docSizeBytes: 0, liveItems: 0, deletedItems: 0, gcItems: 0, clientCount: 0, stateVector: [] }) },
     }
   }
 
@@ -70,6 +74,9 @@ export function useCollaboration(roomName: string = 'default') {
     setLocalState({ name, color: userColor })
   }
 
+  const transactionLog = useTransactionLog(doc)
+  const docMetrics = useDocMetrics(doc)
+
   return {
     doc,
     provider,
@@ -81,5 +88,7 @@ export function useCollaboration(roomName: string = 'default') {
     userColor,
     updateUserName,
     messageLog,
+    transactionLog,
+    docMetrics,
   }
 }

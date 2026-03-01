@@ -1,6 +1,7 @@
 const STORAGE_KEY = 'yjs-devtools'
 
-export type DevToolsTab = 'doc' | 'sync' | 'awareness'
+const DEV_TOOLS_TABS = ['doc', 'sync', 'awareness', 'history'] as const
+export type DevToolsTab = (typeof DEV_TOOLS_TABS)[number]
 
 interface DevToolsState {
   open: boolean
@@ -14,7 +15,7 @@ function loadState(): DevToolsState {
       const parsed = JSON.parse(raw)
       return {
         open: typeof parsed.open === 'boolean' ? parsed.open : false,
-        activeTab: ['doc', 'sync', 'awareness'].includes(parsed.activeTab) ? parsed.activeTab : 'doc',
+        activeTab: (DEV_TOOLS_TABS as readonly string[]).includes(parsed.activeTab) ? parsed.activeTab : 'doc',
       }
     }
   }
