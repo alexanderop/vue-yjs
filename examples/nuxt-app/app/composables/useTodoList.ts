@@ -1,9 +1,8 @@
-import * as Y from 'yjs'
 import { useYArray, useUndoManager } from 'vue-yjs'
 import { sortKeyAppend, sortKeyForMove } from '~/utils/sortKey'
 
 export function useTodoList() {
-  const { items: rawTodos, push, update, delete: deleteItem, yArray } = useYArray<Todo>('todos')
+  const { items: rawTodos, push, update, findIndex, updateBy, deleteBy, yArray } = useYArray<Todo>('todos')
 
   const todos = computed(() => {
     return [...rawTodos.value].toSorted((a, b) => {
@@ -13,14 +12,6 @@ export function useTodoList() {
   })
 
   const { undo, redo, canUndo, canRedo } = useUndoManager(yArray)
-
-  function findIndexById(id: string): number {
-    for (let i = 0; i < yArray.length; i++) {
-      const item = yArray.get(i)
-      if (item instanceof Y.Map && item.get('id') === id) return i
-    }
-    return -1
-  }
 
   function addTodo(text: string) {
     if (!text.trim()) return
@@ -34,21 +25,17 @@ export function useTodoList() {
   }
 
   function toggleTodo(id: string) {
-    const idx = findIndexById(id)
+    const idx = findIndex('id', id)
     if (idx === -1) return
     update(idx, { done: !rawTodos.value[idx]!.done })
   }
 
   function deleteTodo(id: string) {
-    const idx = findIndexById(id)
-    if (idx === -1) return
-    deleteItem(idx)
+    deleteBy('id', id)
   }
 
   function editTodo(id: string, text: string) {
-    const idx = findIndexById(id)
-    if (idx === -1) return
-    update(idx, { text })
+    updateBy('id', id, { text })
   }
 
   function moveTodo(fromIndex: number, toIndex: number) {
@@ -57,10 +44,7 @@ export function useTodoList() {
     if (newSortKey === null) return
 
     const movedItem = sorted[fromIndex]!
-    const idx = findIndexById(movedItem.id)
-    if (idx !== -1) {
-      update(idx, { sortKey: newSortKey })
-    }
+    updateBy('id', movedItem.id, { sortKey: newSortKey })
   }
 
   return {

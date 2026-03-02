@@ -110,4 +110,147 @@ describe("useYArray", () => {
     result.yArray.push(["external"]);
     expect(result.items.value).toEqual(["external"]);
   });
+
+  // --- findIndex ---
+
+  test("findIndex() finds item by key", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push(
+      { id: "1", text: "Buy milk", done: false },
+      { id: "2", text: "Walk dog", done: true },
+    );
+    expect(result.findIndex("id", "2")).toBe(1);
+  });
+
+  test("findIndex() returns -1 when not found", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push({ id: "1", text: "Buy milk", done: false });
+    expect(result.findIndex("id", "missing")).toBe(-1);
+  });
+
+  test("findIndex() returns -1 for empty array", () => {
+    const { result } = setupYArray<Todo>("todos");
+    expect(result.findIndex("id", "1")).toBe(-1);
+  });
+
+  test("findIndex() returns first match for duplicate keys", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push(
+      { id: "dup", text: "First", done: false },
+      { id: "dup", text: "Second", done: true },
+    );
+    expect(result.findIndex("id", "dup")).toBe(0);
+  });
+
+  test("findIndex() works with non-id keys", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push(
+      { id: "1", text: "Buy milk", done: false },
+      { id: "2", text: "Walk dog", done: true },
+    );
+    expect(result.findIndex("text", "Walk dog")).toBe(1);
+  });
+
+  test("findIndex() throws for primitive arrays", () => {
+    const { result } = setupYArray<string>("items");
+    result.push("hello");
+    expect(() => result.findIndex("length" as any, 5 as any)).toThrow(
+      "useYArray.findIndex() can only be used on arrays of objects",
+    );
+  });
+
+  // --- updateBy ---
+
+  test("updateBy() updates item by key", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push(
+      { id: "1", text: "Buy milk", done: false },
+      { id: "2", text: "Walk dog", done: false },
+    );
+    const found = result.updateBy("id", "2", { done: true });
+    expect(found).toBe(true);
+    expect(result.items.value).toEqual([
+      { id: "1", text: "Buy milk", done: false },
+      { id: "2", text: "Walk dog", done: true },
+    ]);
+  });
+
+  test("updateBy() returns false when not found", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push({ id: "1", text: "Buy milk", done: false });
+    const found = result.updateBy("id", "missing", { done: true });
+    expect(found).toBe(false);
+    expect(result.items.value).toEqual([
+      { id: "1", text: "Buy milk", done: false },
+    ]);
+  });
+
+  test("updateBy() returns false for empty array", () => {
+    const { result } = setupYArray<Todo>("todos");
+    expect(result.updateBy("id", "1", { done: true })).toBe(false);
+  });
+
+  test("updateBy() updates first match for duplicate keys", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push(
+      { id: "dup", text: "First", done: false },
+      { id: "dup", text: "Second", done: false },
+    );
+    result.updateBy("id", "dup", { done: true });
+    expect(result.items.value).toEqual([
+      { id: "dup", text: "First", done: true },
+      { id: "dup", text: "Second", done: false },
+    ]);
+  });
+
+  test("updateBy() updates multiple fields", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push({ id: "1", text: "Buy milk", done: false });
+    result.updateBy("id", "1", { text: "Buy eggs", done: true });
+    expect(result.items.value).toEqual([
+      { id: "1", text: "Buy eggs", done: true },
+    ]);
+  });
+
+  // --- deleteBy ---
+
+  test("deleteBy() deletes item by key", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push(
+      { id: "1", text: "Buy milk", done: false },
+      { id: "2", text: "Walk dog", done: false },
+    );
+    const found = result.deleteBy("id", "1");
+    expect(found).toBe(true);
+    expect(result.items.value).toEqual([
+      { id: "2", text: "Walk dog", done: false },
+    ]);
+  });
+
+  test("deleteBy() returns false when not found", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push({ id: "1", text: "Buy milk", done: false });
+    const found = result.deleteBy("id", "missing");
+    expect(found).toBe(false);
+    expect(result.items.value).toEqual([
+      { id: "1", text: "Buy milk", done: false },
+    ]);
+  });
+
+  test("deleteBy() returns false for empty array", () => {
+    const { result } = setupYArray<Todo>("todos");
+    expect(result.deleteBy("id", "1")).toBe(false);
+  });
+
+  test("deleteBy() deletes first match for duplicate keys", () => {
+    const { result } = setupYArray<Todo>("todos");
+    result.push(
+      { id: "dup", text: "First", done: false },
+      { id: "dup", text: "Second", done: false },
+    );
+    result.deleteBy("id", "dup");
+    expect(result.items.value).toEqual([
+      { id: "dup", text: "Second", done: false },
+    ]);
+  });
 });
