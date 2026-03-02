@@ -50,6 +50,10 @@ export function useMyFeature(options?: UseMyFeatureOptions): UseMyFeatureReturn 
 }
 ```
 
+## Documentation
+
+- [ ] Create API reference page in `docs/content/2.composables/` following the composable page template
+
 ## Convention Checklist
 
 - [ ] **shallowRef** for all reactive state (never `ref` or `reactive`)

@@ -8,7 +8,8 @@ Vue 3 composables for Yjs. pnpm monorepo.
 - `examples/app/` — Vite SPA example
 - `examples/nuxt-app/` — Nuxt 4 collaborative todo example
 - `.react-yjs-reference/` — design reference only, not part of the library
-- `docs/plans/` — completed implementation plans (read-only reference)
+- `docs/` — Docus documentation site (workspace)
+- `dev-docs/plans/` — completed implementation plans (read-only reference)
 
 ## Commands
 
@@ -45,9 +46,9 @@ After completing ANY code changes, **always** spawn a subagent to run `pnpm lint
 
 ## IMPORTANT
 
-Read the relevant docs/ file BEFORE starting work:
+Read the relevant dev-docs/ file BEFORE starting work:
 
-- Composable development → `docs/vue-yjs-patterns.md`
-- Nuxt example work → `docs/nuxt-example-guide.md`
-- Testing → `docs/testing-guide.md`
-- Adding a new composable → `docs/new-composable-checklist.md`
+- Composable development → `dev-docs/vue-yjs-patterns.md`
+- Nuxt example work → `dev-docs/nuxt-example-guide.md`
+- Testing → `dev-docs/testing-guide.md`
+- Adding a new composable → `dev-docs/new-composable-checklist.md`

@@ -24,6 +24,8 @@
     ".changeset/**",
     "coverage/**",
     "examples/nuxt-app/.nuxt/**",
-    "examples/nuxt-app/.output/**"
+    "examples/nuxt-app/.output/**",
+    "docs/.nuxt/**",
+    "docs/.output/**"
   ]
 }

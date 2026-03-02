@@ -19,5 +19,9 @@ dist
 .wrangler
 .vercel
 
+# Docs build output
+docs/.nuxt/
+docs/.output/
+
 # Reference repos
 .react-yjs-reference/

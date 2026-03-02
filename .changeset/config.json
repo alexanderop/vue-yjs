@@ -7,5 +7,5 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["vue-yjs-example-app", "vue-yjs-example-nuxt-app"]
+  "ignore": ["vue-yjs-example-app", "vue-yjs-example-nuxt-app", "vue-yjs-docs"]
 }

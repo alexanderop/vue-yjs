@@ -1,0 +1,19 @@
+{
+  "name": "vue-yjs-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev --extends docus",
+    "build": "nuxt build --extends docus",
+    "generate": "nuxt generate --extends docus",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@barzhsieh/nuxt-content-mermaid": "^2.2.3",
+    "better-sqlite3": "^12.6.0",
+    "docus": "^5.7.0",
+    "nuxt": "^4.3.0",
+    "vue-yjs": "workspace:*",
+    "yjs": "^13.6.0"
+  }
+}
